@@ -65,12 +65,6 @@ class TareasViewModel(
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-                return TareasViewModel(application) as T
-            }
-        }
+
     }
 }
