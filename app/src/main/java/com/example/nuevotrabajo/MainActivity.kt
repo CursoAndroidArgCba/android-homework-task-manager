@@ -16,7 +16,7 @@ import com.example.nuevotrabajo.domain.ObtenerTareasUseCase
 import com.example.nuevotrabajo.presentation.PantallaTareas
 import com.example.nuevotrabajo.presentation.TareasViewModel
 import com.example.nuevotrabajo.ui.theme.NuevoTrabajoTheme
-
+//hoalsada
 class MainActivity : ComponentActivity() {
 
     private val viewModel: TareasViewModel by viewModels()
