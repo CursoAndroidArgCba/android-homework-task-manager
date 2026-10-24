@@ -66,5 +66,6 @@ class TareasViewModel(
 
     companion object {
         // TODO: Crear el factory del viewmodel para que se pueda implementar
+        // TODO: COntrolar cambios de Cesar
     }
 }
