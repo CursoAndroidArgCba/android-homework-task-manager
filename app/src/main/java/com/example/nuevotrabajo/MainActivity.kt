@@ -19,7 +19,7 @@ import com.example.nuevotrabajo.ui.theme.NuevoTrabajoTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: TareasViewModel by viewModels()
+    private val viewModel: TareasViewModel by viewModels() // todo: mover la mainactivity al directori de la ui y crear la carpeta screens
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
