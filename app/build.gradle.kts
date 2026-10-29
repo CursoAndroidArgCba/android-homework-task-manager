@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // Se agrega el plugin KSP necesario para generar el código de Room
+    id("com.google.devtools.ksp") version "2.3.11"
 }
 
 android {
@@ -58,4 +60,9 @@ dependencies {
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
+    // Se agrega el compilador de Room para procesar las anotaciones (usando KSP)
+    ksp("androidx.room:room-compiler:$roomVersion")
+    
+    // Se agrega la librería para usar collectAsStateWithLifecycle en Compose
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
 }

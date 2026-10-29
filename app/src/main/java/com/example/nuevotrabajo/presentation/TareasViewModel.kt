@@ -1,11 +1,8 @@
 package com.example.nuevotrabajo.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.nuevotrabajo.data.ImpRepository
-import com.example.nuevotrabajo.data.localdatabase.AppDatabase
 import com.example.nuevotrabajo.domain.CambiarEstadoTareaUseCase
 import com.example.nuevotrabajo.domain.CrearTareaUseCase
 import com.example.nuevotrabajo.domain.ObtenerTareasUseCase
@@ -27,17 +24,14 @@ import java.util.UUID
  * 3. Principio SOLID aplicado: Principio de Responsabilidad Única (SRP), ya que el ViewModel
  * separa la lógica de la interfaz visual y delega todas las reglas de negocio
  * estrictamente en los Casos de Uso.
+ * Además, se aplica el Principio de Inversión de Dependencias (DIP) inyectando
+ * los Casos de Uso mediante el constructor en lugar de instanciarlos dentro de la clase.
  */
 class TareasViewModel(
-    application: Application
-) : AndroidViewModel(application) {
-
-    val database = AppDatabase.getDatabase(getApplication<Application>().applicationContext)
-    val repository = ImpRepository(database.tareaDao()) // Asegúrate de que el método del DAO coincida con tu interfaz
-
-    val obtenerTareasUseCase = ObtenerTareasUseCase(repository)
-    val crearTareaUseCase = CrearTareaUseCase(repository)
-    val cambiarEstadoTareaUseCase = CambiarEstadoTareaUseCase(repository)
+    private val obtenerTareasUseCase: ObtenerTareasUseCase,
+    private val crearTareaUseCase: CrearTareaUseCase,
+    private val cambiarEstadoTareaUseCase: CambiarEstadoTareaUseCase
+) : ViewModel() { // Se hereda de ViewModel() en vez de AndroidViewModel, ya no necesitamos el contexto aquí (mejor Clean Architecture).
 
     val estadoTareas: StateFlow<List<Tarea>> = obtenerTareasUseCase()
         .stateIn(
@@ -64,7 +58,26 @@ class TareasViewModel(
         }
     }
 
-    companion object {
-
+    /**
+     * Factoría para inyectar dependencias manualmente al ViewModel.
+     * Al usar este patrón cumplimos con el Principio de Inversión de Dependencias (DIP).
+     * Evitamos que el ViewModel cree sus propias dependencias, haciéndolo 100% testeable.
+     */
+    class Factory(
+        private val obtenerTareasUseCase: ObtenerTareasUseCase,
+        private val crearTareaUseCase: CrearTareaUseCase,
+        private val cambiarEstadoTareaUseCase: CambiarEstadoTareaUseCase
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(TareasViewModel::class.java)) {
+                return TareasViewModel(
+                    obtenerTareasUseCase,
+                    crearTareaUseCase,
+                    cambiarEstadoTareaUseCase
+                ) as T
+            }
+            throw IllegalArgumentException("Clase ViewModel desconocida")
+        }
     }
 }
