@@ -1,4 +1,4 @@
-package com.example.nuevotrabajo.data
+package com.example.nuevotrabajo.data.localdatabase
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -20,5 +20,5 @@ interface TareaDao {
     suspend fun insertarTarea(tarea: TareaEntity)
 
     @Query("UPDATE tareas SET estaCompletada = NOT estaCompletada WHERE id = :id")
-    suspend fun cambiarEstadoTarea(id: String)
+    suspend fun cambiarEstadoTarea(id: String): Int
 }

@@ -1,5 +1,8 @@
 package com.example.nuevotrabajo.data
 
+import com.example.nuevotrabajo.data.localdatabase.TareaDao
+import com.example.nuevotrabajo.data.localdatabase.toDomain
+import com.example.nuevotrabajo.data.localdatabase.toEntity
 import com.example.nuevotrabajo.domain.Repository
 import com.example.nuevotrabajo.domain.Tarea
 import kotlinx.coroutines.flow.Flow
