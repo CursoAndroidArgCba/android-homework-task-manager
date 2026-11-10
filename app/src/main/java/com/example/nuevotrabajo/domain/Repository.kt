@@ -19,4 +19,5 @@ interface Repository {
     fun obtenerTareas(): Flow<List<Tarea>>
     suspend fun guardarTarea(tarea: Tarea)
     suspend fun cambiarEstadoTarea(idTarea: String)
+    suspend fun eliminarTarea(idTarea: String)
 }

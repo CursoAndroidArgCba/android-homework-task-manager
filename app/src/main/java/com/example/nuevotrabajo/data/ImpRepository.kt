@@ -1,5 +1,8 @@
 package com.example.nuevotrabajo.data
 
+import com.example.nuevotrabajo.data.localdatabase.TareaDao
+import com.example.nuevotrabajo.data.localdatabase.toDomain
+import com.example.nuevotrabajo.data.localdatabase.toEntity
 import com.example.nuevotrabajo.domain.Repository
 import com.example.nuevotrabajo.domain.Tarea
 import kotlinx.coroutines.flow.Flow
@@ -32,5 +35,9 @@ class ImpRepository(
 
     override suspend fun cambiarEstadoTarea(id: String) {
         tareaDao.cambiarEstadoTarea(id)
+    }
+
+    override suspend fun eliminarTarea(idTarea: String) {
+        tareaDao.eliminarTareaPorId(idTarea)
     }
 }

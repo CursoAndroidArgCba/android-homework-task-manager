@@ -26,3 +26,10 @@ class CambiarEstadoTareaUseCase(private val repository: Repository) {
         repository.cambiarEstadoTarea(idTarea)
     }
 }
+class EliminarTareaUseCase(
+    private val repository: Repository // O el nombre de tu interfaz en Repository.kt
+) {
+    suspend operator fun invoke(idTarea: String) {
+        repository.eliminarTarea(idTarea)
+    }
+}
