@@ -23,7 +23,8 @@ class MainActivity : ComponentActivity() {
                 PantallaTareas(
                     tareas = tareas,
                     onAgregarTarea = { titulo, desc -> viewModel.agregarNuevaTarea(titulo, desc) },
-                    onCambiarEstado = { id -> viewModel.alternarEstado(id) }
+                    onCambiarEstado = { id -> viewModel.alternarEstado(id) },
+                    onEliminarTarea = { id -> viewModel.eliminarTarea(id) } // <-- Agregá esta línea acá
                 )
             }
         }

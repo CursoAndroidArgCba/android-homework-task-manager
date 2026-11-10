@@ -36,4 +36,8 @@ class ImpRepository(
     override suspend fun cambiarEstadoTarea(id: String) {
         tareaDao.cambiarEstadoTarea(id)
     }
+
+    override suspend fun eliminarTarea(idTarea: String) {
+        tareaDao.eliminarTareaPorId(idTarea)
+    }
 }

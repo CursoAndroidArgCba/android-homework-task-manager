@@ -8,6 +8,7 @@ import com.example.nuevotrabajo.data.ImpRepository
 import com.example.nuevotrabajo.data.localdatabase.AppDatabase
 import com.example.nuevotrabajo.domain.CambiarEstadoTareaUseCase
 import com.example.nuevotrabajo.domain.CrearTareaUseCase
+import com.example.nuevotrabajo.domain.EliminarTareaUseCase // 1. Importa tu caso de uso de eliminar
 import com.example.nuevotrabajo.domain.ObtenerTareasUseCase
 import com.example.nuevotrabajo.domain.Tarea
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +20,8 @@ import java.util.UUID
 class TareasViewModel(
     private val obtenerTareasUseCase: ObtenerTareasUseCase,
     private val crearTareaUseCase: CrearTareaUseCase,
-    private val cambiarEstadoTareaUseCase: CambiarEstadoTareaUseCase
+    private val cambiarEstadoTareaUseCase: CambiarEstadoTareaUseCase,
+    private val eliminarTareaUseCase: EliminarTareaUseCase // 2. Añádelo al constructor
 ) : ViewModel() {
 
     val estadoTareas: StateFlow<List<Tarea>> = obtenerTareasUseCase()
@@ -47,6 +49,13 @@ class TareasViewModel(
         }
     }
 
+    // 3. Agrega la función que invocará la UI al hacer clic en el botón de eliminar
+    fun eliminarTarea(idTarea: String) {
+        viewModelScope.launch {
+            eliminarTareaUseCase(idTarea)
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -60,11 +69,13 @@ class TareasViewModel(
                 val obtenerTareas = ObtenerTareasUseCase(repository)
                 val crearTarea = CrearTareaUseCase(repository)
                 val cambiarEstado = CambiarEstadoTareaUseCase(repository)
+                val eliminarTarea = EliminarTareaUseCase(repository) // 4. Instancia el caso de uso en la Factory
 
                 return TareasViewModel(
                     obtenerTareasUseCase = obtenerTareas,
                     crearTareaUseCase = crearTarea,
-                    cambiarEstadoTareaUseCase = cambiarEstado
+                    cambiarEstadoTareaUseCase = cambiarEstado,
+                    eliminarTareaUseCase = eliminarTarea // 5. Pásalo al constructor del ViewModel
                 ) as T
             }
         }

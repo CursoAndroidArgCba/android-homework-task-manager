@@ -5,28 +5,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.nuevotrabajo.domain.Tarea
 
 /**
- * CAPA: Presentation: se contruye un puente entre los datos y lo que vera el usuario
- * mediante la viewmodel y el jetpack compose
+- CAPA: Presentation: se construye un puente entre los datos y lo que vera el usuario
+- mediante la viewmodel y el jetpack compose
  *
- * 1. ¿Qué representa?: Representa la capa visual y de interacción con el usuario, es lo que el usuario
- * ve o toca en la pantalla.
+- ¿Qué representa?: Representa la capa visual y de interacción con el usuario, es lo que el usuario
+- ve o toca en la pantalla.
  *
- * 2. ¿Por qué se utiliza esta estructura?: La UI solo se encarga de observar el StateFlow del ViewModel
- * y emitir eventos cuando el usuario interactúa.
+- 2. ¿Por qué se utiliza esta estructura?: La UI solo se encarga de observar el StateFlow del ViewModel
+- y emitir eventos cuando el usuario interactúa.
  *
- * 3. Principio SOLID aplicado: Principio de Responsabilidad Única (SRP). ya que la única misión
- * de esta pantalla es encargarse del diseño visual y de la interfaz de usuario,
+- 3. Principio SOLID aplicado: Principio de Responsabilidad Única (SRP). ya que la única misión
+- de esta pantalla es encargarse del diseño visual y de la interfaz de usuario.
  */
 @Composable
 fun PantallaTareas(
     tareas: List<Tarea>,
     onAgregarTarea: (String, String?) -> Unit,
-    onCambiarEstado: (String) -> Unit
+    onCambiarEstado: (String) -> Unit,
+    onEliminarTarea: (String) -> Unit // 1. Nuevo evento expuesto hacia el ViewModel
 ) {
     var textoTitulo by remember { mutableStateOf("") }
     var textoDescripcion by remember { mutableStateOf("") }
@@ -72,14 +74,14 @@ fun PantallaTareas(
                         modifier = Modifier
                             .padding(16.dp)
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(text = tarea.titulo, style = MaterialTheme.typography.titleMedium)
                             tarea.descripcion?.let {
                                 Text(text = it, style = MaterialTheme.typography.bodyMedium)
                             }
-                            // Texto extra opcional para mostrar el estado en palabras al profesor
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = if (tarea.estaCompletada) "Estado: Completada" else "Estado: Pendiente",
@@ -87,10 +89,17 @@ fun PantallaTareas(
                                 color = if (tarea.estaCompletada) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                             )
                         }
-                        Checkbox(
-                            checked = tarea.estaCompletada,
-                            onCheckedChange = { onCambiarEstado(tarea.id) }
-                        )
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = tarea.estaCompletada,
+                                onCheckedChange = { onCambiarEstado(tarea.id) }
+                            )
+                            // 2. Botón de eliminación al lado del Checkbox
+                            TextButton(onClick = { onEliminarTarea(tarea.id) }) {
+                                Text(text = "Eliminar", color = MaterialTheme.colorScheme.error)
+                            }
+                        }
                     }
                 }
             }
