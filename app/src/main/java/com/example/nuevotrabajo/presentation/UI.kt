@@ -10,28 +10,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.nuevotrabajo.domain.Tarea
 
-/**
-- CAPA: Presentation: se construye un puente entre los datos y lo que vera el usuario
-- mediante la viewmodel y el jetpack compose
- *
-- ¿Qué representa?: Representa la capa visual y de interacción con el usuario, es lo que el usuario
-- ve o toca en la pantalla.
- *
-- 2. ¿Por qué se utiliza esta estructura?: La UI solo se encarga de observar el StateFlow del ViewModel
-- y emitir eventos cuando el usuario interactúa.
- *
-- 3. Principio SOLID aplicado: Principio de Responsabilidad Única (SRP). ya que la única misión
-- de esta pantalla es encargarse del diseño visual y de la interfaz de usuario.
- */
 @Composable
 fun PantallaTareas(
     tareas: List<Tarea>,
     onAgregarTarea: (String, String?) -> Unit,
     onCambiarEstado: (String) -> Unit,
-    onEliminarTarea: (String) -> Unit // 1. Nuevo evento expuesto hacia el ViewModel
+    onEliminarTarea: (String) -> Unit,
+    onEditarTarea: (String, String, String?) -> Unit // 1. Nuevo evento: (id, nuevoTitulo, nuevaDescripcion)
 ) {
     var textoTitulo by remember { mutableStateOf("") }
     var textoDescripcion by remember { mutableStateOf("") }
+
+    // Estados para controlar qué tarea se está editando actualmente
+    var tareaAEditar by remember { mutableStateOf<Tarea?>(null) }
+    var tituloEditado by remember { mutableStateOf("") }
+    var descripcionEditada by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
         OutlinedTextField(
@@ -95,7 +88,18 @@ fun PantallaTareas(
                                 checked = tarea.estaCompletada,
                                 onCheckedChange = { onCambiarEstado(tarea.id) }
                             )
-                            // 2. Botón de eliminación al lado del Checkbox
+
+                            // 2. Nuevo botón "Editar" agregado sin quitar nada anterior
+                            TextButton(
+                                onClick = {
+                                    tareaAEditar = tarea
+                                    tituloEditado = tarea.titulo
+                                    descripcionEditada = tarea.descripcion ?: ""
+                                }
+                            ) {
+                                Text(text = "Editar", color = MaterialTheme.colorScheme.primary)
+                            }
+
                             TextButton(onClick = { onEliminarTarea(tarea.id) }) {
                                 Text(text = "Eliminar", color = MaterialTheme.colorScheme.error)
                             }
@@ -104,5 +108,51 @@ fun PantallaTareas(
                 }
             }
         }
+    }
+
+    // 3. Diálogo emergente para modificar la tarea seleccionada
+    tareaAEditar?.let { tarea ->
+        AlertDialog(
+            onDismissRequest = { tareaAEditar = null },
+            title = { Text("Modificar Tarea") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = tituloEditado,
+                        onValueChange = { tituloEditado = it },
+                        label = { Text("Título") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = descripcionEditada,
+                        onValueChange = { descripcionEditada = it },
+                        label = { Text("Descripción (opcional)") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (tituloEditado.isNotBlank()) {
+                            onEditarTarea(
+                                tarea.id,
+                                tituloEditado,
+                                descripcionEditada.ifBlank { null }
+                            )
+                            tareaAEditar = null
+                        }
+                    }
+                ) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { tareaAEditar = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
