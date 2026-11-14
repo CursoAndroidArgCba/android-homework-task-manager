@@ -1,16 +1,16 @@
-package com.example.nuevotrabajo.presentation
+package com.example.nuevotrabajo.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.nuevotrabajo.data.ImpRepository
-import com.example.nuevotrabajo.data.localdatabase.AppDatabase
-import com.example.nuevotrabajo.domain.CambiarEstadoTareaUseCase
-import com.example.nuevotrabajo.domain.CrearTareaUseCase
-import com.example.nuevotrabajo.domain.EliminarTareaUseCase // 1. Importa tu caso de uso de eliminar
-import com.example.nuevotrabajo.domain.ObtenerTareasUseCase
-import com.example.nuevotrabajo.domain.Tarea
+import com.example.nuevotrabajo.data.repository.ImpRepository
+import com.example.nuevotrabajo.data.local.database.AppDatabase
+import com.example.nuevotrabajo.domain.usecase.CambiarEstadoTareaUseCase
+import com.example.nuevotrabajo.domain.usecase.CrearTareaUseCase
+import com.example.nuevotrabajo.domain.usecase.EliminarTareaUseCase // 1. Importa tu caso de uso de eliminar
+import com.example.nuevotrabajo.domain.usecase.ObtenerTareasUseCase
+import com.example.nuevotrabajo.domain.model.Tarea
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn

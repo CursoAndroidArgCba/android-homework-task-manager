@@ -1,9 +1,10 @@
-package com.example.nuevotrabajo.data.localdatabase
+package com.example.nuevotrabajo.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.nuevotrabajo.data.local.entity.TareaEntity
 import kotlinx.coroutines.flow.Flow
 
 /**

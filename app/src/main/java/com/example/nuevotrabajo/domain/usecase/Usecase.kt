@@ -1,4 +1,7 @@
-package com.example.nuevotrabajo.domain
+package com.example.nuevotrabajo.domain.usecase
+
+import com.example.nuevotrabajo.domain.repository.Repository
+import com.example.nuevotrabajo.domain.model.Tarea
 
 /**
  * CAPA: Use Case
