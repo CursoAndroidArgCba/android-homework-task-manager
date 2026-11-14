@@ -1,4 +1,4 @@
-package com.example.nuevotrabajo.domain
+package com.example.nuevotrabajo.domain.model
 
 /**
  * CAPA: Domain : Es el nucleo ya que representa las reglas puras de la aplicacion,

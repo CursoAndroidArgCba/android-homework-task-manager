@@ -1,6 +1,7 @@
-package com.example.nuevotrabajo.domain
+package com.example.nuevotrabajo.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import com.example.nuevotrabajo.domain.model.Tarea
 
 /**
  * CAPA: Domain (Repository )

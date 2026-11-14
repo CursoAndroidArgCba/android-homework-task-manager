@@ -1,4 +1,4 @@
-package com.example.nuevotrabajo.presentation
+package com.example.nuevotrabajo.presentation.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.nuevotrabajo.domain.Tarea
+import com.example.nuevotrabajo.domain.model.Tarea
 
 /**
 - CAPA: Presentation: se construye un puente entre los datos y lo que vera el usuario
