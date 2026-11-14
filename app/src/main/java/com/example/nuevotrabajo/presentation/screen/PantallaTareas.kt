@@ -33,7 +33,11 @@ fun PantallaTareas(
     var textoTitulo by remember { mutableStateOf("") }
     var textoDescripcion by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         OutlinedTextField(
             value = textoTitulo,
             onValueChange = { textoTitulo = it },
@@ -63,41 +67,48 @@ fun PantallaTareas(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
             items(tareas) { tarea ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                 ) {
-                    Row(
+                    Column(
                         modifier = Modifier
                             .padding(16.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxWidth()
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(text = tarea.titulo, style = MaterialTheme.typography.titleMedium)
-                            tarea.descripcion?.let {
-                                Text(text = it, style = MaterialTheme.typography.bodyMedium)
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = if (tarea.estaCompletada) "Estado: Completada" else "Estado: Pendiente",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = if (tarea.estaCompletada) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                            )
+                        Text(text = tarea.titulo, style = MaterialTheme.typography.titleMedium)
+                        tarea.descripcion?.let {
+                            Text(text = it, style = MaterialTheme.typography.bodyMedium)
                         }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = if (tarea.estaCompletada) "Estado: Completada" else "Estado: Pendiente",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (tarea.estaCompletada) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Checkbox(
                                 checked = tarea.estaCompletada,
                                 onCheckedChange = { onCambiarEstado(tarea.id) }
                             )
-                            // 2. Botón de eliminación al lado del Checkbox
-                            TextButton(onClick = { onEliminarTarea(tarea.id) }) {
-                                Text(text = "Eliminar", color = MaterialTheme.colorScheme.error)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = { onEliminarTarea(tarea.id) },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                            ) {
+                                Text(text = "Eliminar", color = MaterialTheme.colorScheme.onError)
                             }
                         }
                     }
