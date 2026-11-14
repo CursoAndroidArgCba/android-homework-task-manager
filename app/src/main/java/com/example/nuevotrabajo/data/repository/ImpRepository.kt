@@ -1,10 +1,10 @@
-package com.example.nuevotrabajo.data
+package com.example.nuevotrabajo.data.repository
 
-import com.example.nuevotrabajo.data.localdatabase.TareaDao
-import com.example.nuevotrabajo.data.localdatabase.toDomain
-import com.example.nuevotrabajo.data.localdatabase.toEntity
-import com.example.nuevotrabajo.domain.Repository
-import com.example.nuevotrabajo.domain.Tarea
+import com.example.nuevotrabajo.data.local.dao.TareaDao
+import com.example.nuevotrabajo.data.local.entity.toDomain
+import com.example.nuevotrabajo.data.local.entity.toEntity
+import com.example.nuevotrabajo.domain.repository.Repository
+import com.example.nuevotrabajo.domain.model.Tarea
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

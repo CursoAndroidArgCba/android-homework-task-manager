@@ -1,6 +1,6 @@
-package com.example.nuevotrabajo.data
+package com.example.nuevotrabajo.data.mock
 
-import com.example.nuevotrabajo.domain.Tarea
+import com.example.nuevotrabajo.domain.model.Tarea
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
