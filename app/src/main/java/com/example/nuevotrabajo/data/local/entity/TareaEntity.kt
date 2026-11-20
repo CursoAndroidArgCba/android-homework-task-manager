@@ -1,8 +1,8 @@
-package com.example.nuevotrabajo.data.localdatabase
+package com.example.nuevotrabajo.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.nuevotrabajo.domain.Tarea
+import com.example.nuevotrabajo.domain.model.Tarea
 
 @Entity(tableName = "tareas")
 data class TareaEntity(
