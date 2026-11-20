@@ -1,5 +1,6 @@
 package com.example.nuevotrabajo.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,11 +9,13 @@ import com.example.nuevotrabajo.data.repository.ImpRepository
 import com.example.nuevotrabajo.data.local.database.AppDatabase
 import com.example.nuevotrabajo.domain.usecase.CambiarEstadoTareaUseCase
 import com.example.nuevotrabajo.domain.usecase.CrearTareaUseCase
-import com.example.nuevotrabajo.domain.usecase.EliminarTareaUseCase // 1. Importa tu caso de uso de eliminar
+import com.example.nuevotrabajo.domain.usecase.EliminarTareaUseCase
 import com.example.nuevotrabajo.domain.usecase.ObtenerTareasUseCase
 import com.example.nuevotrabajo.domain.model.Tarea
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -21,7 +24,7 @@ class TareasViewModel(
     private val obtenerTareasUseCase: ObtenerTareasUseCase,
     private val crearTareaUseCase: CrearTareaUseCase,
     private val cambiarEstadoTareaUseCase: CambiarEstadoTareaUseCase,
-    private val eliminarTareaUseCase: EliminarTareaUseCase // 2. Añádelo al constructor
+    private val eliminarTareaUseCase: EliminarTareaUseCase
 ) : ViewModel() {
 
     val estadoTareas: StateFlow<List<Tarea>> = obtenerTareasUseCase()
@@ -30,6 +33,10 @@ class TareasViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    // StateFlow adicional para notificar la última tarea completada
+    private val _ultimaTareaCompletada = MutableStateFlow<String?>(null)
+    val ultimaTareaCompletada: StateFlow<String?> = _ultimaTareaCompletada.asStateFlow()
 
     fun agregarNuevaTarea(titulo: String, descripcion: String?) {
         viewModelScope.launch {
@@ -49,10 +56,19 @@ class TareasViewModel(
         }
     }
 
-    // 3. Agrega la función que invocará la UI al hacer clic en el botón de eliminar
     fun eliminarTarea(idTarea: String) {
         viewModelScope.launch {
             eliminarTareaUseCase(idTarea)
+        }
+    }
+
+    // Nueva función solicitada
+    fun completeTask(taskId: String) {
+        Log.d("TareasViewModel", "Tarea completada con ID: $taskId")
+        _ultimaTareaCompletada.value = taskId
+
+        viewModelScope.launch {
+            cambiarEstadoTareaUseCase(taskId)
         }
     }
 
@@ -69,13 +85,13 @@ class TareasViewModel(
                 val obtenerTareas = ObtenerTareasUseCase(repository)
                 val crearTarea = CrearTareaUseCase(repository)
                 val cambiarEstado = CambiarEstadoTareaUseCase(repository)
-                val eliminarTarea = EliminarTareaUseCase(repository) // 4. Instancia el caso de uso en la Factory
+                val eliminarTarea = EliminarTareaUseCase(repository)
 
                 return TareasViewModel(
                     obtenerTareasUseCase = obtenerTareas,
                     crearTareaUseCase = crearTarea,
                     cambiarEstadoTareaUseCase = cambiarEstado,
-                    eliminarTareaUseCase = eliminarTarea // 5. Pásalo al constructor del ViewModel
+                    eliminarTareaUseCase = eliminarTarea
                 ) as T
             }
         }
