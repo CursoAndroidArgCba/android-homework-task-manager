@@ -91,7 +91,7 @@ fun PantallaTareas(
                             style = MaterialTheme.typography.labelSmall,
                             color = if (tarea.estaCompletada) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                         )
-                        
+
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Row(
@@ -105,6 +105,12 @@ fun PantallaTareas(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
+                                onClick = { tareaEnEdicion = tarea }
+                            ) {
+                                Text(text = "Completar")
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
                                 onClick = { onEliminarTarea(tarea.id) },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                             ) {
@@ -115,5 +121,49 @@ fun PantallaTareas(
                 }
             }
         }
+    }
+
+    tareaEnEdicion?.let { tarea ->
+        var titulo by remember(tarea.id) { mutableStateOf(tarea.titulo) }
+        var descripcion by remember(tarea.id) { mutableStateOf(tarea.descripcion ?: "") }
+
+        AlertDialog(
+            onDismissRequest = { tareaEnEdicion = null },
+            title = { Text("Modificar tarea") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = titulo,
+                        onValueChange = { titulo = it },
+                        label = { Text("Título de la tarea") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = descripcion,
+                        onValueChange = { descripcion = it },
+                        label = { Text("Descripción (opcional)") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (titulo.isNotBlank()) {
+                            onEditarTarea(tarea.id, titulo, descripcion)
+                            tareaEnEdicion = null
+                        }
+                    }
+                ) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { tareaEnEdicion = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
