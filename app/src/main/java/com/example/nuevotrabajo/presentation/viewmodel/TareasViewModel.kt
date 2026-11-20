@@ -5,13 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.nuevotrabajo.data.repository.ImpRepository
 import com.example.nuevotrabajo.data.local.database.AppDatabase
+import com.example.nuevotrabajo.data.repository.ImpRepository
+import com.example.nuevotrabajo.domain.model.Tarea
 import com.example.nuevotrabajo.domain.usecase.CambiarEstadoTareaUseCase
 import com.example.nuevotrabajo.domain.usecase.CrearTareaUseCase
 import com.example.nuevotrabajo.domain.usecase.EliminarTareaUseCase
 import com.example.nuevotrabajo.domain.usecase.ObtenerTareasUseCase
-import com.example.nuevotrabajo.domain.model.Tarea
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +34,6 @@ class TareasViewModel(
             initialValue = emptyList()
         )
 
-    // StateFlow adicional para notificar la última tarea completada
     private val _ultimaTareaCompletada = MutableStateFlow<String?>(null)
     val ultimaTareaCompletada: StateFlow<String?> = _ultimaTareaCompletada.asStateFlow()
 
@@ -62,13 +61,21 @@ class TareasViewModel(
         }
     }
 
-    // Nueva función solicitada
     fun completeTask(taskId: String) {
         Log.d("TareasViewModel", "Tarea completada con ID: $taskId")
         _ultimaTareaCompletada.value = taskId
+    }
 
+    fun editarTarea(id: String, nuevoTitulo: String, nuevaDescripcion: String?) {
         viewModelScope.launch {
-            cambiarEstadoTareaUseCase(taskId)
+            val tareaActual = estadoTareas.value.find { it.id == id }
+            val tareaActualizada = Tarea(
+                id = id,
+                titulo = tareaActual?.titulo ?: nuevoTitulo,
+                descripcion = nuevaDescripcion?.ifBlank { null },
+                estaCompletada = tareaActual?.estaCompletada ?: false
+            )
+            crearTareaUseCase(tareaActualizada)
         }
     }
 

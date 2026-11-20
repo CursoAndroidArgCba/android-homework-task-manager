@@ -28,10 +28,13 @@ fun PantallaTareas(
     tareas: List<Tarea>,
     onAgregarTarea: (String, String?) -> Unit,
     onCambiarEstado: (String) -> Unit,
-    onEliminarTarea: (String) -> Unit // 1. Nuevo evento expuesto hacia el ViewModel
+    onEliminarTarea: (String) -> Unit,
+    onCompletarTarea: (String) -> Unit = {},
+    onEditarTarea: (String, String, String?) -> Unit = { _, _, _ -> }
 ) {
     var textoTitulo by remember { mutableStateOf("") }
     var textoDescripcion by remember { mutableStateOf("") }
+    var tareaEnEdicion by remember { mutableStateOf<Tarea?>(null) }
 
     Column(
         modifier = Modifier
@@ -55,7 +58,7 @@ fun PantallaTareas(
         Button(
             onClick = {
                 if (textoTitulo.isNotBlank()) {
-                    onAgregarTarea(textoTitulo, textoDescripcion)
+                    onAgregarTarea(textoTitulo, textoDescripcion.ifBlank { null })
                     textoTitulo = ""
                     textoDescripcion = ""
                 }
@@ -70,7 +73,7 @@ fun PantallaTareas(
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(tareas) { tarea ->
+            items(tareas, key = { it.id }) { tarea ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -129,20 +132,21 @@ fun PantallaTareas(
 
         AlertDialog(
             onDismissRequest = { tareaEnEdicion = null },
-            title = { Text("Modificar tarea") },
+            title = { Text("Editar descripción") },
             text = {
                 Column {
                     OutlinedTextField(
                         value = titulo,
-                        onValueChange = { titulo = it },
+                        onValueChange = { },
                         label = { Text("Título de la tarea") },
+                        enabled = false,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = descripcion,
                         onValueChange = { descripcion = it },
-                        label = { Text("Descripción (opcional)") },
+                        label = { Text("Descripción") },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -150,10 +154,8 @@ fun PantallaTareas(
             confirmButton = {
                 Button(
                     onClick = {
-                        if (titulo.isNotBlank()) {
-                            onEditarTarea(tarea.id, titulo, descripcion)
-                            tareaEnEdicion = null
-                        }
+                        onEditarTarea(tarea.id, tarea.titulo, descripcion)
+                        tareaEnEdicion = null
                     }
                 ) {
                     Text("Guardar")
