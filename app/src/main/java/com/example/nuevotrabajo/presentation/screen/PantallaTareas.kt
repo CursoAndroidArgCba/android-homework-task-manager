@@ -28,10 +28,13 @@ fun PantallaTareas(
     tareas: List<Tarea>,
     onAgregarTarea: (String, String?) -> Unit,
     onCambiarEstado: (String) -> Unit,
-    onEliminarTarea: (String) -> Unit // 1. Nuevo evento expuesto hacia el ViewModel
+    onEliminarTarea: (String) -> Unit,
+    onCompletarTarea: (String) -> Unit = {},
+    onEditarTarea: (String, String, String?) -> Unit = { _, _, _ -> }
 ) {
     var textoTitulo by remember { mutableStateOf("") }
     var textoDescripcion by remember { mutableStateOf("") }
+    var tareaEnEdicion by remember { mutableStateOf<Tarea?>(null) }
 
     Column(
         modifier = Modifier
@@ -55,7 +58,7 @@ fun PantallaTareas(
         Button(
             onClick = {
                 if (textoTitulo.isNotBlank()) {
-                    onAgregarTarea(textoTitulo, textoDescripcion)
+                    onAgregarTarea(textoTitulo, textoDescripcion.ifBlank { null })
                     textoTitulo = ""
                     textoDescripcion = ""
                 }
@@ -70,7 +73,7 @@ fun PantallaTareas(
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(tareas) { tarea ->
+            items(tareas, key = { it.id }) { tarea ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -91,7 +94,7 @@ fun PantallaTareas(
                             style = MaterialTheme.typography.labelSmall,
                             color = if (tarea.estaCompletada) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                         )
-                        
+
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Row(
@@ -105,6 +108,12 @@ fun PantallaTareas(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
+                                onClick = { tareaEnEdicion = tarea }
+                            ) {
+                                Text(text = "Completar")
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
                                 onClick = { onEliminarTarea(tarea.id) },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                             ) {
@@ -115,5 +124,48 @@ fun PantallaTareas(
                 }
             }
         }
+    }
+
+    tareaEnEdicion?.let { tarea ->
+        var titulo by remember(tarea.id) { mutableStateOf(tarea.titulo) }
+        var descripcion by remember(tarea.id) { mutableStateOf(tarea.descripcion ?: "") }
+
+        AlertDialog(
+            onDismissRequest = { tareaEnEdicion = null },
+            title = { Text("Editar descripción") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = titulo,
+                        onValueChange = { },
+                        label = { Text("Título de la tarea") },
+                        enabled = false,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = descripcion,
+                        onValueChange = { descripcion = it },
+                        label = { Text("Descripción") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onEditarTarea(tarea.id, tarea.titulo, descripcion)
+                        tareaEnEdicion = null
+                    }
+                ) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { tareaEnEdicion = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
