@@ -62,7 +62,6 @@ class TareasViewModel(
     }
 
     fun completeTask(taskId: String) {
-        Log.d("TareasViewModel", "Tarea completada con ID: $taskId")
         _ultimaTareaCompletada.value = taskId
     }
 
