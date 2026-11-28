@@ -108,7 +108,7 @@ fun PantallaTareas(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
-                                onClick = { tareaEnEdicion = tarea }
+                                onClick = { onCompletarTarea(tarea.id) }
                             ) {
                                 Text(text = "Completar")
                             }
