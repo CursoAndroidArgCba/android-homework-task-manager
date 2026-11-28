@@ -104,7 +104,7 @@ fun PantallaTareas(
                         ) {
                             Checkbox(
                                 checked = tarea.estaCompletada,
-                                onCheckedChange = { onCambiarEstado(tarea.id) }
+                                onCheckedChange = { if (!tarea.estaCompletada) onCambiarEstado(tarea.id) }
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
